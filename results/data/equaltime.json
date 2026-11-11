@@ -1,0 +1,25 @@
+{
+ "nodes_per_ms": 3000.125242037558,
+ "rows": [
+  {
+   "agent": "AlphaZero-style (RL)",
+   "ms": 2.115219831466675,
+   "ab_budget": 6346,
+   "score": 0.25,
+   "w": 12,
+   "d": 36,
+   "l": 72
+  },
+  {
+   "agent": "MCTS (random rollouts)",
+   "ms": 5.7260215282440186,
+   "ab_budget": 17179,
+   "score": 0.004166666666666667,
+   "w": 0,
+   "d": 1,
+   "l": 119
+  }
+ ],
+ "depth_400": 1.75,
+ "depth_eq": 3.95
+}

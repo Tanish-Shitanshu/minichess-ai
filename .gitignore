@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.so
+tools/fairy-stockfish
+.pytest_cache/
+results/data_quick/
+results/ga_smoke*
+*.png.tmp
+results/_superseded_shared_tt/
+report/*.aux
+report/*.log
+report/*.out
+report/*.png

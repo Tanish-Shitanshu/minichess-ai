@@ -1,0 +1,23 @@
+{
+ "budget": 400,
+ "ms_per_move": {
+  "Random": 0.008970499038696289,
+  "Greedy-1ply": 0.012981891632080078,
+  "AB hand-crafted": 0.19091367721557617,
+  "MCTS (random rollouts)": 5.730158090591431,
+  "AB equal weights (TDLeaf start)": 0.19869208335876465,
+  "AB + TDLeaf (RL)": 0.1955091953277588,
+  "AB + GA (evolution)": 0.19410252571105957,
+  "AB + GA (constrained)": 0.195389986038208,
+  "AlphaZero-style (RL)": 2.2852540016174316
+ },
+ "extra": {
+  "AB hand-crafted@100": 0.07433295249938965,
+  "AB hand-crafted@1600": 0.66261887550354,
+  "AB hand-crafted@6400": 2.444678544998169,
+  "AB hand-crafted@25600": 9.192711114883423,
+  "AlphaZero-style (RL)@100": 0.5922257900238037,
+  "AlphaZero-style (RL)@1600": 8.58008861541748,
+  "MCTS (random rollouts)@1600": 21.862304210662842
+ }
+}

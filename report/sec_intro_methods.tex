@@ -1,0 +1,47 @@
+\section{Introduction}
+Minichess has a long history, from the $6\times6$ program of Kister et al. \cite{kister1957}, and its variants are small enough to study complete learning pipelines on a laptop, yet they keep the structure that makes chess hard: tactics, king safety and a large gap between a naive and a good evaluation function. We use Gardner's $5\times5$ minichess (pieces \texttt{RNBQK}/\texttt{PPPPP}; no castling, double pawn step or en passant), which Mhalla and Prost showed to be a draw under perfect play \cite{mhalla2013}. Because the game-theoretic value is known, a strong agent should draw most games, and any win is a sign that the opponent has made a mistake.
+
+We ask three questions. \textbf{RQ1:} which of five techniques is strongest when all are given the same compute budget? \textbf{RQ2:} what does learning add over hand-written knowledge, and where exactly is reinforcement learning (RL) used? \textbf{RQ3:} do wins against our own agents reflect real playing strength, or only the ability to exploit them? To answer RQ3 we use an independent engine, Fairy-Stockfish \cite{fairy}, as an external yardstick.
+
+\textbf{Contributions.} (i) A C++ rules engine checked against Fairy-Stockfish move counts (perft) and wrapped for Python. (ii) Five agents sharing one engine: alpha-beta with a hand-crafted evaluation, UCT Monte-Carlo tree search (MCTS), an alpha-beta evaluation learned by TDLeaf($\lambda$) self-play, the same evaluation tuned by a genetic algorithm (GA), and an AlphaZero-style network trained by self-play. (iii) A compute-matched protocol: equal node or simulation budget, fixed openings, Bradley--Terry Elo with bootstrap intervals, an external Elo anchor and a per-move evaluation-loss measure. (iv) An interactive web platform and all code, so every number can be regenerated.
+
+\section{Background}
+Computer chess rests on minimax search with alpha-beta pruning \cite{shannon1950,knuth1975} and a heuristic evaluation. Samuel's checkers program already learned evaluation weights from play \cite{samuel1959}; temporal-difference (TD) learning produced TD-Gammon \cite{tesauro1995}, and TDLeaf($\lambda$) adapted TD learning to search-based programs such as chess \cite{baxter2000}. Monte-Carlo tree search with the UCT rule \cite{kocsis2006,coulom2007,browne2012} needs no evaluation function, only rollouts. AlphaZero \cite{silver2018,silver2017} replaced both with a neural network trained from self-play alone. Minichess has been used with such methods before \cite{sun2021,hammersborg2022}, and Pgx \cite{koyamada2023} provides GPU simulators; we instead keep a transparent, CPU-only pipeline and focus on a controlled comparison and on the quality of individual moves. Textbook background is in \cite{sutton2018,russell2021}.
+
+\section{Methods}
+\subsection{Game, engine and search budget}
+The board is 25 squares; a move is a (from, to, promotion) triple. The engine implements legal-move generation, checkmate, stalemate, the 50-move rule, insufficient material and threefold repetition. Perft counts from the start position agree with Fairy-Stockfish's \texttt{gardner} variant to the depths we tested, and the unit tests (\texttt{pytest}) reproduce them. All agents are measured in the same currency, a \emph{budget} per move: alpha-beta counts visited nodes, MCTS and the AlphaZero-style agent count simulations. Our main budget is $B=400$.
+
+\subsection{Alpha-beta with a linear evaluation}
+The search is iterative-deepening negamax with alpha-beta pruning, a Zobrist-hashed \cite{zobrist1970} transposition table, killer and history heuristics, MVV-LVA capture ordering, quiescence search and a check extension; it stops when the node budget is used. Leaf positions are scored by a linear function of 14 features,
+\begin{equation}
+V(s)=\sum_{i=1}^{14} w_i\,\phi_i(s),
+\end{equation}
+seen from White. The features are: the White-minus-Black count of pawns, knights, bishops, rooks and queens; the number of pawns on the 3rd and on the 4th rank (relative to the owner); a centrality score for each of N, B, R, Q, K; the mobility of N, B, R, Q; and the number of friendly pieces adjacent to the king. The \emph{hand-crafted} weights are the textbook values 100/300/320/500/900 for material and small positional bonuses. Three agents share this search and differ only in $\mathbf{w}$: hand-crafted, TDLeaf-learned and GA-evolved.
+
+\subsection{UCT Monte-Carlo tree search}
+At a tree node with $N$ visits, the child $a$ with $n_a$ visits and mean value $Q_a$ maximises $Q_a + c\sqrt{\ln N / n_a}$ (we use $c=0.7$). A leaf is expanded and scored by a random rollout of at most 40 plies; if the game has not ended, the position is scored by a soft material count instead of being called a draw. The move with most visits is played.
+
+\subsection{TDLeaf($\lambda$): reinforcement learning of the evaluation}
+\textbf{Where RL is applied.} The state is the board, the action is the move returned by a depth-3 alpha-beta search (with probability $\epsilon=0.15$ a random legal move is played for exploration), and the only reward is the final result $z\in\{+1,0,-1\}$ from White's view. The value function is $V(s)=\tanh(\mathbf{w}\cdot\boldsymbol\phi(s)/400)$. Because the program plays the move found by search, the TD update uses the value of the principal-variation leaf $l_t$ of each search rather than of the root position \cite{baxter2000}. With $d_t=V(l_{t+1})-V(l_t)$ and $V(l_T):=z$,
+\begin{equation}
+\Delta\mathbf{w}=\alpha\sum_{t}\nabla_{\mathbf{w}}V(l_t)\sum_{j\ge t}\lambda^{\,j-t}d_j .
+\end{equation}
+In words: each leaf value is nudged towards the values that follow it, and the final result is passed back to earlier positions with decay $\lambda=0.7$. Weights start with all five piece types equal to 100 and all positional weights zero, so no chess knowledge is given. We train on 8000 self-play games, normalising each coordinate of the step by the running RMS of its feature.
+
+\subsection{Genetic algorithm (evolution, not RL)}
+A genome is the 14-vector $\mathbf{w}$. The population (32 genomes) is evaluated by playing each genome against randomly chosen others at budget 400 from random openings; fitness is the mean score. Selection is by 3-way tournament, recombination is blend crossover (BLX-0.3), mutation is Gaussian with decaying strength, and the two best genomes survive unchanged (elitism). Fitness is relative to the current population, so this is \emph{co-evolution} \cite{rosin1997}. We run two variants: unconstrained, and constrained by box limits that encode basic knowledge (every piece is worth at least 1.5 pawns, mobility is never negative). No gradient or per-move credit assignment is used, which is why this is not RL.
+
+\subsection{AlphaZero-style self-play RL}
+\textbf{Where RL is applied.} The state is the board as 12 one-hot piece planes seen from the side to move; the action is a (from, to) pair (625 outputs, illegal ones masked); the reward is the game result for the side to move. The network is a multilayer perceptron, $300\to H\to H$ with ReLU units, then a 625-way policy head and a tanh value head ($H=192$). Search is PUCT \cite{silver2018}: the child maximising
+\begin{equation}
+Q_a + c_{\text{puct}}\,P_a\,\frac{\sqrt{N}}{1+n_a},\qquad c_{\text{puct}}=1.5,
+\end{equation}
+where $P_a$ is the policy prior; Dirichlet noise ($\alpha=0.3$, weight $0.25$) is mixed into the root prior during self-play and the first 12 moves are sampled in proportion to visit counts. Each iteration plays 64 self-play games (the first move is random with probability one half to diversify games) with 150 simulations per move, stores (position, visit distribution $\boldsymbol\pi$, outcome $z$), and takes 120 Adam steps \cite{kingma2015} on random minibatches of the replay buffer to minimise
+\begin{equation}
+\mathcal{L}=(z-v)^2-\sum_a \pi_a\log p_a+c\,\lVert\theta\rVert^2 .
+\end{equation}
+Search turns the current network into a stronger policy (policy improvement); regressing onto the game result evaluates it; repeating both is policy iteration. Tree search, network inference and self-play run in C++; back-propagation is implemented in NumPy and its gradients were verified against finite differences.
+
+\section{Experimental protocol}
+All experiments use two CPU cores and no GPU. Every pairing is played from 60 fixed random openings of 2--4 plies, once with each colour (120 games); the same set is used for every pairing, so agents are not compared on different positions. Strength is reported as Elo from a Bradley--Terry maximum-likelihood fit \cite{bradley1952} with 95\% bootstrap intervals over games, anchored at the hand-crafted agent. \textbf{E1} is the round robin at $B=400$. \textbf{E2} plays each agent against Fairy-Stockfish at fixed depths 1--12 (20 openings, both colours). \textbf{E3} re-tests every saved checkpoint of every learner against the hand-crafted agent with the same protocol. \textbf{E4} measures move quality: for 300 positions reached by random play, we compare each agent's chosen move with Fairy-Stockfish's depth-9 evaluation and record the centipawn loss (the evaluation of the best line minus the evaluation after the agent's move, capped at 1000). A \emph{blunder} is a loss of at least 200 centipawns. We also measure how Elo scales with budget from 25 to 1600 and the wall-clock time per move.

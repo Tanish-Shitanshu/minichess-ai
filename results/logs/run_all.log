@@ -1,0 +1,183 @@
+[run] weights
+[done] weights in 0s
+[run] e1
+  E1 Random                   vs Greedy-1ply              0.308 (W0 D74 L46)  0s
+  E1 Random                   vs AB hand-crafted          0.000 (W0 D0 L120)  0s
+  E1 Random                   vs MCTS (random rollouts)   0.004 (W0 D1 L119)  4s
+  E1 Random                   vs AB equal weights (TDLeaf start) 0.000 (W0 D0 L120)  4s
+  E1 Random                   vs AB + TDLeaf (RL)         0.000 (W0 D0 L120)  5s
+  E1 Random                   vs AB + GA (evolution)      0.000 (W0 D0 L120)  5s
+  E1 Random                   vs AB + GA (constrained)    0.000 (W0 D0 L120)  6s
+  E1 Random                   vs AlphaZero-style (RL)     0.042 (W0 D10 L110)  7s
+  E1 Greedy-1ply              vs AB hand-crafted          0.013 (W0 D3 L117)  8s
+  E1 Greedy-1ply              vs MCTS (random rollouts)   0.346 (W7 D69 L44)  12s
+  E1 Greedy-1ply              vs AB equal weights (TDLeaf start) 0.079 (W2 D15 L103)  12s
+  E1 Greedy-1ply              vs AB + TDLeaf (RL)         0.008 (W0 D2 L118)  13s
+  E1 Greedy-1ply              vs AB + GA (evolution)      0.013 (W0 D3 L117)  13s
+  E1 Greedy-1ply              vs AB + GA (constrained)    0.017 (W0 D4 L116)  13s
+  E1 Greedy-1ply              vs AlphaZero-style (RL)     0.071 (W1 D15 L104)  15s
+  E1 AB hand-crafted          vs MCTS (random rollouts)   0.983 (W118 D0 L2)  19s
+  E1 AB hand-crafted          vs AB equal weights (TDLeaf start) 0.871 (W101 D7 L12)  20s
+  E1 AB hand-crafted          vs AB + TDLeaf (RL)         0.558 (W54 D26 L40)  21s
+  E1 AB hand-crafted          vs AB + GA (evolution)      0.475 (W44 D26 L50)  22s
+  E1 AB hand-crafted          vs AB + GA (constrained)    0.471 (W41 D31 L48)  23s
+  E1 AB hand-crafted          vs AlphaZero-style (RL)     0.571 (W45 D47 L28)  26s
+  E1 MCTS (random rollouts)   vs AB equal weights (TDLeaf start) 0.113 (W10 D7 L103)  30s
+  E1 MCTS (random rollouts)   vs AB + TDLeaf (RL)         0.008 (W1 D0 L119)  34s
+  E1 MCTS (random rollouts)   vs AB + GA (evolution)      0.021 (W2 D1 L117)  38s
+  E1 MCTS (random rollouts)   vs AB + GA (constrained)    0.025 (W3 D0 L117)  42s
+  E1 MCTS (random rollouts)   vs AlphaZero-style (RL)     0.083 (W1 D18 L101)  47s
+  E1 AB equal weights (TDLeaf start) vs AB + TDLeaf (RL)         0.121 (W10 D9 L101)  48s
+  E1 AB equal weights (TDLeaf start) vs AB + GA (evolution)      0.113 (W10 D7 L103)  49s
+  E1 AB equal weights (TDLeaf start) vs AB + GA (constrained)    0.104 (W7 D11 L102)  50s
+  E1 AB equal weights (TDLeaf start) vs AlphaZero-style (RL)     0.333 (W14 D52 L54)  53s
+  E1 AB + TDLeaf (RL)         vs AB + GA (evolution)      0.471 (W47 D19 L54)  54s
+  E1 AB + TDLeaf (RL)         vs AB + GA (constrained)    0.408 (W40 D18 L62)  54s
+  E1 AB + TDLeaf (RL)         vs AlphaZero-style (RL)     0.537 (W45 D39 L36)  57s
+  E1 AB + GA (evolution)      vs AB + GA (constrained)    0.483 (W45 D26 L49)  58s
+  E1 AB + GA (evolution)      vs AlphaZero-style (RL)     0.579 (W45 D49 L26)  61s
+  E1 AB + GA (constrained)    vs AlphaZero-style (RL)     0.613 (W48 D51 L21)  63s
+[done] e1 in 66s
+[run] scaling
+  scaling AB hand-crafted          budget    25  score vs AB-hand@400 0.325
+  scaling AB hand-crafted          budget    50  score vs AB-hand@400 0.350
+  scaling AB hand-crafted          budget   100  score vs AB-hand@400 0.333
+  scaling AB hand-crafted          budget   200  score vs AB-hand@400 0.400
+  scaling AB hand-crafted          budget   400  score vs AB-hand@400 0.500
+  scaling AB hand-crafted          budget   800  score vs AB-hand@400 0.692
+  scaling AB hand-crafted          budget  1600  score vs AB-hand@400 0.700
+  scaling MCTS (random rollouts)   budget    25  score vs AB-hand@400 0.000
+  scaling MCTS (random rollouts)   budget    50  score vs AB-hand@400 0.008
+  scaling MCTS (random rollouts)   budget   100  score vs AB-hand@400 0.000
+  scaling MCTS (random rollouts)   budget   200  score vs AB-hand@400 0.000
+  scaling MCTS (random rollouts)   budget   400  score vs AB-hand@400 0.025
+  scaling MCTS (random rollouts)   budget   800  score vs AB-hand@400 0.000
+  scaling MCTS (random rollouts)   budget  1600  score vs AB-hand@400 0.067
+  scaling AB + GA (evolution)      budget    25  score vs AB-hand@400 0.225
+  scaling AB + GA (evolution)      budget    50  score vs AB-hand@400 0.233
+  scaling AB + GA (evolution)      budget   100  score vs AB-hand@400 0.250
+  scaling AB + GA (evolution)      budget   200  score vs AB-hand@400 0.342
+  scaling AB + GA (evolution)      budget   400  score vs AB-hand@400 0.483
+  scaling AB + GA (evolution)      budget   800  score vs AB-hand@400 0.608
+  scaling AB + GA (evolution)      budget  1600  score vs AB-hand@400 0.775
+  scaling AB + GA (constrained)    budget    25  score vs AB-hand@400 0.333
+  scaling AB + GA (constrained)    budget    50  score vs AB-hand@400 0.333
+  scaling AB + GA (constrained)    budget   100  score vs AB-hand@400 0.375
+  scaling AB + GA (constrained)    budget   200  score vs AB-hand@400 0.417
+  scaling AB + GA (constrained)    budget   400  score vs AB-hand@400 0.525
+  scaling AB + GA (constrained)    budget   800  score vs AB-hand@400 0.675
+  scaling AB + GA (constrained)    budget  1600  score vs AB-hand@400 0.758
+  scaling AlphaZero-style (RL)     budget    25  score vs AB-hand@400 0.242
+  scaling AlphaZero-style (RL)     budget    50  score vs AB-hand@400 0.258
+  scaling AlphaZero-style (RL)     budget   100  score vs AB-hand@400 0.300
+  scaling AlphaZero-style (RL)     budget   200  score vs AB-hand@400 0.400
+  scaling AlphaZero-style (RL)     budget   400  score vs AB-hand@400 0.458
+  scaling AlphaZero-style (RL)     budget   800  score vs AB-hand@400 0.550
+  scaling AlphaZero-style (RL)     budget  1600  score vs AB-hand@400 0.600
+[done] scaling in 40s
+[run] e2
+  E2 Greedy-1ply              vs FS depth 1: 0.062 (W0 D5 L35)  1s
+  E2 Greedy-1ply              vs FS depth 2: 0.025 (W0 D2 L38)  1s
+  E2 Greedy-1ply              vs FS depth 3: 0.013 (W0 D1 L39)  2s
+  E2 Greedy-1ply              vs FS depth 4: 0.025 (W0 D2 L38)  3s
+  E2 Greedy-1ply              vs FS depth 6: 0.013 (W0 D1 L39)  4s
+  E2 Greedy-1ply              vs FS depth 8: 0.025 (W0 D2 L38)  5s
+  E2 Greedy-1ply              vs FS depth 10: 0.025 (W0 D2 L38)  8s
+  E2 AB hand-crafted          vs FS depth 1: 0.675 (W22 D10 L8)  9s
+  E2 AB hand-crafted          vs FS depth 2: 0.637 (W21 D9 L10)  11s
+  E2 Greedy-1ply              vs FS depth 12: 0.013 (W0 D1 L39)  13s
+  E2 AB hand-crafted          vs FS depth 3: 0.463 (W15 D7 L18)  13s
+  E2 AB hand-crafted          vs FS depth 4: 0.475 (W15 D8 L17)  14s
+  E2 AB hand-crafted          vs FS depth 6: 0.338 (W9 D9 L22)  15s
+  E2 AB hand-crafted          vs FS depth 8: 0.237 (W7 D5 L28)  16s
+  E2 AB hand-crafted          vs FS depth 10: 0.200 (W6 D4 L30)  20s
+  E2 MCTS (random rollouts)   vs FS depth 1: 0.037 (W0 D3 L37)  25s
+  E2 MCTS (random rollouts)   vs FS depth 2: 0.000 (W0 D0 L40)  29s
+  E2 AB hand-crafted          vs FS depth 12: 0.212 (W6 D5 L29)  30s
+  E2 MCTS (random rollouts)   vs FS depth 3: 0.013 (W0 D1 L39)  34s
+  E2 MCTS (random rollouts)   vs FS depth 4: 0.013 (W0 D1 L39)  34s
+  E2 MCTS (random rollouts)   vs FS depth 6: 0.000 (W0 D0 L40)  39s
+  E2 MCTS (random rollouts)   vs FS depth 8: 0.037 (W1 D1 L38)  40s
+  E2 MCTS (random rollouts)   vs FS depth 10: 0.013 (W0 D1 L39)  45s
+  E2 AB equal weights (TDLeaf start) vs FS depth 1: 0.150 (W3 D6 L31)  46s
+  E2 AB equal weights (TDLeaf start) vs FS depth 2: 0.100 (W2 D4 L34)  48s
+  E2 AB equal weights (TDLeaf start) vs FS depth 3: 0.212 (W3 D11 L26)  50s
+  E2 MCTS (random rollouts)   vs FS depth 12: 0.000 (W0 D0 L40)  51s
+  E2 AB equal weights (TDLeaf start) vs FS depth 4: 0.100 (W4 D0 L36)  51s
+  E2 AB equal weights (TDLeaf start) vs FS depth 6: 0.050 (W1 D2 L37)  53s
+  E2 AB equal weights (TDLeaf start) vs FS depth 8: 0.075 (W2 D2 L36)  53s
+  E2 AB equal weights (TDLeaf start) vs FS depth 10: 0.050 (W1 D2 L37)  58s
+  E2 AB + TDLeaf (RL)         vs FS depth 1: 0.487 (W14 D11 L15)  60s
+  E2 AB + TDLeaf (RL)         vs FS depth 2: 0.463 (W13 D11 L16)  61s
+  E2 AB + TDLeaf (RL)         vs FS depth 3: 0.425 (W13 D8 L19)  63s
+  E2 AB equal weights (TDLeaf start) vs FS depth 12: 0.025 (W1 D0 L39)  63s
+  E2 AB + TDLeaf (RL)         vs FS depth 4: 0.350 (W9 D10 L21)  65s
+  E2 AB + TDLeaf (RL)         vs FS depth 6: 0.237 (W7 D5 L28)  65s
+  E2 AB + TDLeaf (RL)         vs FS depth 8: 0.138 (W4 D3 L33)  68s
+  E2 AB + TDLeaf (RL)         vs FS depth 10: 0.200 (W5 D6 L29)  73s
+  E2 AB + GA (evolution)      vs FS depth 1: 0.637 (W22 D7 L11)  75s
+  E2 AB + GA (evolution)      vs FS depth 2: 0.550 (W19 D6 L15)  77s
+  E2 AB + GA (evolution)      vs FS depth 3: 0.537 (W16 D11 L13)  79s
+  E2 AB + GA (evolution)      vs FS depth 4: 0.500 (W15 D10 L15)  81s
+  E2 AB + TDLeaf (RL)         vs FS depth 12: 0.163 (W5 D3 L32)  82s
+  E2 AB + GA (evolution)      vs FS depth 6: 0.338 (W9 D9 L22)  83s
+  E2 AB + GA (evolution)      vs FS depth 8: 0.188 (W6 D3 L31)  85s
+  E2 AB + GA (evolution)      vs FS depth 10: 0.225 (W7 D4 L29)  90s
+  E2 AB + GA (constrained)    vs FS depth 1: 0.662 (W21 D11 L8)  91s
+  E2 AB + GA (constrained)    vs FS depth 2: 0.537 (W17 D9 L14)  93s
+  E2 AB + GA (constrained)    vs FS depth 3: 0.463 (W13 D11 L16)  95s
+  E2 AB + GA (constrained)    vs FS depth 4: 0.400 (W11 D10 L19)  97s
+  E2 AB + GA (evolution)      vs FS depth 12: 0.175 (W6 D2 L32)  98s
+  E2 AB + GA (constrained)    vs FS depth 6: 0.263 (W9 D3 L28)  99s
+  E2 AB + GA (constrained)    vs FS depth 8: 0.200 (W6 D4 L30)  100s
+  E2 AB + GA (constrained)    vs FS depth 10: 0.200 (W6 D4 L30)  104s
+  E2 AlphaZero-style (RL)     vs FS depth 1: 0.512 (W10 D21 L9)  108s
+  E2 AlphaZero-style (RL)     vs FS depth 2: 0.525 (W12 D18 L10)  112s
+  E2 AB + GA (constrained)    vs FS depth 12: 0.188 (W5 D5 L30)  115s
+  E2 AlphaZero-style (RL)     vs FS depth 3: 0.412 (W8 D17 L15)  116s
+  E2 AlphaZero-style (RL)     vs FS depth 4: 0.463 (W12 D13 L15)  119s
+  E2 AlphaZero-style (RL)     vs FS depth 6: 0.338 (W5 D17 L18)  120s
+  E2 AlphaZero-style (RL)     vs FS depth 8: 0.237 (W3 D13 L24)  124s
+  E2 AlphaZero-style (RL)     vs FS depth 10: 0.188 (W2 D11 L27)  129s
+  E2 AlphaZero-style (RL)     vs FS depth 12: 0.200 (W3 D10 L27)  142s
+[done] e2 in 142s
+[run] e3
+  E3 AB + TDLeaf (RL): 21 checkpoints
+  E3 AB + GA (evolution): 41 checkpoints
+  E3 AB + GA (constrained): 41 checkpoints
+  E3 AlphaZero-style (RL): 20 checkpoints
+[done] e3 in 116s
+[run] e4
+  E4 Random                   mean loss  612.0 cp  best-move 0.14  blunders(>=200cp) 0.71
+  E4 Greedy-1ply              mean loss  259.9 cp  best-move 0.39  blunders(>=200cp) 0.34
+  E4 AB hand-crafted          mean loss   73.0 cp  best-move 0.71  blunders(>=200cp) 0.11
+  E4 MCTS (random rollouts)   mean loss  386.3 cp  best-move 0.31  blunders(>=200cp) 0.50
+  E4 AB equal weights (TDLeaf start) mean loss  125.3 cp  best-move 0.58  blunders(>=200cp) 0.19
+  E4 AB + TDLeaf (RL)         mean loss   83.4 cp  best-move 0.69  blunders(>=200cp) 0.13
+  E4 AB + GA (evolution)      mean loss   66.1 cp  best-move 0.72  blunders(>=200cp) 0.10
+  E4 AB + GA (constrained)    mean loss   61.3 cp  best-move 0.71  blunders(>=200cp) 0.09
+  E4 AlphaZero-style (RL)     mean loss  143.3 cp  best-move 0.52  blunders(>=200cp) 0.21
+[done] e4 in 14s
+[run] timing
+  timing Random                             1.458 ms/move
+  timing Greedy-1ply                        1.426 ms/move
+  timing AB hand-crafted                    1.630 ms/move
+  timing MCTS (random rollouts)             10.155 ms/move
+  timing AB equal weights (TDLeaf start)    1.701 ms/move
+  timing AB + TDLeaf (RL)                   1.634 ms/move
+  timing AB + GA (evolution)                1.621 ms/move
+  timing AB + GA (constrained)              1.635 ms/move
+  timing AlphaZero-style (RL)               3.850 ms/move
+  timing AB hand-crafted                    @100 1.475 ms/move
+  timing AB hand-crafted                    @1600 2.092 ms/move
+  timing AB hand-crafted                    @6400 4.714 ms/move
+  timing AB hand-crafted                    @25600 13.817 ms/move
+  timing AlphaZero-style (RL)               @100 2.042 ms/move
+  timing AlphaZero-style (RL)               @1600 12.701 ms/move
+  timing MCTS (random rollouts)             @1600 26.654 ms/move
+[done] timing in 11s
+[run] equaltime
+  equal-time AlphaZero-style (RL)     (6.43 ms) vs AB hand-crafted @11716 nodes: 0.237 (W10 D37 L73)
+  equal-time MCTS (random rollouts)   (10.29 ms) vs AB hand-crafted @18741 nodes: 0.004 (W0 D1 L119)
+  mean alpha-beta depth: 1.8 at 400 nodes, 4.5 at 11716 nodes
+[done] equaltime in 18s

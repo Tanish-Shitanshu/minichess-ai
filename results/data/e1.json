@@ -1,0 +1,266 @@
+{
+ "names": [
+  "Random",
+  "Greedy-1ply",
+  "AB hand-crafted",
+  "MCTS (random rollouts)",
+  "AB equal weights (TDLeaf start)",
+  "AB + TDLeaf (RL)",
+  "AB + GA (evolution)",
+  "AB + GA (constrained)",
+  "AlphaZero-style (RL)"
+ ],
+ "budget": 400,
+ "pairs": {
+  "Random|Greedy-1ply": [
+   0.30833333333333335,
+   0,
+   74,
+   46
+  ],
+  "Random|AB hand-crafted": [
+   0.0,
+   0,
+   0,
+   120
+  ],
+  "Random|MCTS (random rollouts)": [
+   0.004166666666666667,
+   0,
+   1,
+   119
+  ],
+  "Random|AB equal weights (TDLeaf start)": [
+   0.0,
+   0,
+   0,
+   120
+  ],
+  "Random|AB + TDLeaf (RL)": [
+   0.0,
+   0,
+   0,
+   120
+  ],
+  "Random|AB + GA (evolution)": [
+   0.0,
+   0,
+   0,
+   120
+  ],
+  "Random|AB + GA (constrained)": [
+   0.0,
+   0,
+   0,
+   120
+  ],
+  "Random|AlphaZero-style (RL)": [
+   0.041666666666666664,
+   0,
+   10,
+   110
+  ],
+  "Greedy-1ply|AB hand-crafted": [
+   0.0125,
+   0,
+   3,
+   117
+  ],
+  "Greedy-1ply|MCTS (random rollouts)": [
+   0.3458333333333333,
+   7,
+   69,
+   44
+  ],
+  "Greedy-1ply|AB equal weights (TDLeaf start)": [
+   0.07916666666666666,
+   2,
+   15,
+   103
+  ],
+  "Greedy-1ply|AB + TDLeaf (RL)": [
+   0.008333333333333333,
+   0,
+   2,
+   118
+  ],
+  "Greedy-1ply|AB + GA (evolution)": [
+   0.0125,
+   0,
+   3,
+   117
+  ],
+  "Greedy-1ply|AB + GA (constrained)": [
+   0.016666666666666666,
+   0,
+   4,
+   116
+  ],
+  "Greedy-1ply|AlphaZero-style (RL)": [
+   0.07083333333333333,
+   1,
+   15,
+   104
+  ],
+  "AB hand-crafted|MCTS (random rollouts)": [
+   0.9833333333333333,
+   118,
+   0,
+   2
+  ],
+  "AB hand-crafted|AB equal weights (TDLeaf start)": [
+   0.8708333333333333,
+   101,
+   7,
+   12
+  ],
+  "AB hand-crafted|AB + TDLeaf (RL)": [
+   0.5583333333333333,
+   54,
+   26,
+   40
+  ],
+  "AB hand-crafted|AB + GA (evolution)": [
+   0.475,
+   44,
+   26,
+   50
+  ],
+  "AB hand-crafted|AB + GA (constrained)": [
+   0.4708333333333333,
+   41,
+   31,
+   48
+  ],
+  "AB hand-crafted|AlphaZero-style (RL)": [
+   0.5708333333333333,
+   45,
+   47,
+   28
+  ],
+  "MCTS (random rollouts)|AB equal weights (TDLeaf start)": [
+   0.1125,
+   10,
+   7,
+   103
+  ],
+  "MCTS (random rollouts)|AB + TDLeaf (RL)": [
+   0.008333333333333333,
+   1,
+   0,
+   119
+  ],
+  "MCTS (random rollouts)|AB + GA (evolution)": [
+   0.020833333333333332,
+   2,
+   1,
+   117
+  ],
+  "MCTS (random rollouts)|AB + GA (constrained)": [
+   0.025,
+   3,
+   0,
+   117
+  ],
+  "MCTS (random rollouts)|AlphaZero-style (RL)": [
+   0.08333333333333333,
+   1,
+   18,
+   101
+  ],
+  "AB equal weights (TDLeaf start)|AB + TDLeaf (RL)": [
+   0.12083333333333333,
+   10,
+   9,
+   101
+  ],
+  "AB equal weights (TDLeaf start)|AB + GA (evolution)": [
+   0.1125,
+   10,
+   7,
+   103
+  ],
+  "AB equal weights (TDLeaf start)|AB + GA (constrained)": [
+   0.10416666666666667,
+   7,
+   11,
+   102
+  ],
+  "AB equal weights (TDLeaf start)|AlphaZero-style (RL)": [
+   0.3333333333333333,
+   14,
+   52,
+   54
+  ],
+  "AB + TDLeaf (RL)|AB + GA (evolution)": [
+   0.4708333333333333,
+   47,
+   19,
+   54
+  ],
+  "AB + TDLeaf (RL)|AB + GA (constrained)": [
+   0.4083333333333333,
+   40,
+   18,
+   62
+  ],
+  "AB + TDLeaf (RL)|AlphaZero-style (RL)": [
+   0.5375,
+   45,
+   39,
+   36
+  ],
+  "AB + GA (evolution)|AB + GA (constrained)": [
+   0.48333333333333334,
+   45,
+   26,
+   49
+  ],
+  "AB + GA (evolution)|AlphaZero-style (RL)": [
+   0.5791666666666667,
+   45,
+   49,
+   26
+  ],
+  "AB + GA (constrained)|AlphaZero-style (RL)": [
+   0.6125,
+   48,
+   51,
+   21
+  ]
+ },
+ "elo": [
+  -972.8451235261671,
+  -743.8333974858716,
+  0.0,
+  -598.3733923395766,
+  -295.85342612606877,
+  -23.945163224058092,
+  6.695029129709383,
+  23.350946235569154,
+  -90.27885861968977
+ ],
+ "lo": [
+  -1028.9028886884066,
+  -796.6820552509901,
+  0.0,
+  -642.6814379866395,
+  -333.1146930370611,
+  -53.520379678363575,
+  -24.13480844393548,
+  -9.521803146530294,
+  -123.43960820136688
+ ],
+ "hi": [
+  -921.1602584113868,
+  -700.3097463061991,
+  0.0,
+  -558.2589584704399,
+  -265.3413769410811,
+  6.9937950122547266,
+  36.56424052611631,
+  52.88583418355657,
+  -62.736258411341076
+ ],
+ "n_openings": 60
+}

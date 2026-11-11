@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:,">
+<title>Mini Chess AI Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --bg:#f6f5f2; --card:#fff; --ink:#0b0b0b; --ink2:#52514e; --line:#e4e3df; --accent:#2a78d6;
+          --light:#eeeed2; --dark:#769656; --hl:rgba(255,213,0,.45); --sel:rgba(42,120,214,.5); }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--ink); }
+  header { padding:14px 22px; background:#1d1d1b; color:#fff; display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  header h1 { font-size:18px; margin:0; font-weight:650; }
+  nav button { background:none; border:0; color:#c3c2b7; font-size:14px; padding:6px 12px; cursor:pointer; border-bottom:2px solid transparent; }
+  nav button.on { color:#fff; border-color:var(--accent); }
+  main { max-width:1100px; margin:18px auto; padding:0 16px; }
+  .tab { display:none; } .tab.on { display:block; }
+  .row { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+  .panel { flex:1; min-width:290px; display:flex; flex-direction:column; gap:12px; }
+  h3 { margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink2); }
+  label { display:block; margin:6px 0 2px; color:var(--ink2); font-size:12px; }
+  select, input[type=range], button.b { width:100%; }
+  select { padding:6px; border:1px solid var(--line); border-radius:6px; background:#fff; }
+  button.b { padding:8px; border:1px solid var(--line); border-radius:6px; background:#fff; cursor:pointer; }
+  button.b:hover { background:#f0efec; }
+  .btns { display:flex; gap:8px; margin-top:10px; }
+  svg text { user-select:none; }
+  #status { font-weight:600; min-height:20px; }
+  .bar { height:16px; background:#222; border-radius:8px; overflow:hidden; position:relative; }
+  .bar > div { background:#f4f4f0; height:100%; transition:width .3s; }
+  .bar span { position:absolute; left:8px; top:0; font-size:11px; color:#999; line-height:16px; }
+  .mono { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; }
+  #moves { max-height:150px; overflow:auto; }
+  table { border-collapse:collapse; width:100%; } td,th { padding:4px 8px; border-bottom:1px solid var(--line); text-align:left; }
+  th { color:var(--ink2); font-weight:600; }
+  .figs { display:grid; grid-template-columns:repeat(auto-fill,minmax(440px,1fr)); gap:16px; }
+  .figs figure { margin:0; } .figs img { width:100%; border:1px solid var(--line); border-radius:8px; background:#fff; }
+  figcaption { color:var(--ink2); font-size:12px; margin-top:4px; }
+  .mini { display:inline-block; margin:6px; text-align:center; font-size:12px; color:var(--ink2); }
+  .pill { display:inline-block; padding:1px 8px; border-radius:10px; background:#eee; font-size:12px; margin-right:4px; }
+  .promo { display:none; margin-top:8px; } .promo button { font-size:26px; padding:2px 10px; margin-right:6px; cursor:pointer; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Mini Chess AI Lab &nbsp;<span style="font-weight:400;color:#c3c2b7;font-size:13px">Gardner 5×5 · alpha-beta · MCTS · TDLeaf · GA · AlphaZero-style</span></h1>
+  <nav>
+    <button data-tab="play" class="on">Play &amp; watch</button>
+    <button data-tab="train">RL training explorer</button>
+    <button data-tab="exp">Experiments</button>
+  </nav>
+</header>
+<main>
+
+<!-- ============================= PLAY ============================= -->
+<div id="play" class="tab on">
+  <div class="row">
+    <div>
+      <svg id="board" width="460" height="460" viewBox="0 0 460 460"></svg>
+      <div id="promo" class="promo">Promote to: </div>
+    </div>
+    <div class="panel">
+      <div class="card">
+        <h3>Game</h3>
+        <label>White</label><select id="wsel"></select>
+        <label>Black</label><select id="bsel"></select>
+        <label>Search budget: <b id="bval">400</b> nodes (alpha-beta) / simulations (MCTS, AlphaZero)</label>
+        <input id="budget" type="range" min="0" max="7" value="4" step="1">
+        <div class="btns">
+          <button class="b" id="new">New game</button>
+          <button class="b" id="undo">Undo</button>
+          <button class="b" id="flip">Flip board</button>
+        </div>
+        <div class="btns"><label style="margin:0;display:flex;gap:6px;align-items:center"><input type="checkbox" id="showpol" checked> show search policy on the board</label></div>
+      </div>
+      <div class="card">
+        <h3>Status</h3>
+        <div id="status">…</div>
+        <div class="bar" style="margin-top:8px" title="evaluation from White's point of view"><div id="evalbar" style="width:50%"></div><span id="evaltxt"></span></div>
+        <div id="info" class="mono" style="margin-top:10px;color:var(--ink2)"></div>
+      </div>
+      <div class="card"><h3>Moves</h3><div id="moves" class="mono"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= TRAIN ============================= -->
+<div id="train" class="tab">
+  <div class="card">
+    <h3>How the self-play AlphaZero-style network changes during training</h3>
+    <p style="margin:0 0 8px;color:var(--ink2)">Same position, same search budget; each board shows the search's visit distribution for one saved checkpoint
+    (thicker green arrow = more simulations). Early checkpoints have not learned anything; later ones concentrate on sensible moves.
+    The position is the one currently on the Play tab.</p>
+    <div class="row" style="gap:12px;align-items:center">
+      <label style="margin:0">simulations per move</label>
+      <select id="trbudget" style="width:90px"><option>50</option><option selected>100</option><option>400</option></select>
+      <button class="b" id="trgo" style="width:160px">Show checkpoints</button>
+      <span id="trmsg" style="color:var(--ink2)"></span>
+    </div>
+    <div id="trboards" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- ============================= EXPERIMENTS ============================= -->
+<div id="exp" class="tab">
+  <div class="card" id="e1card" style="margin-bottom:16px"><h3>E1 · Round robin (equal compute)</h3><div id="e1tab">loading…</div></div>
+  <div class="figs" id="figs"></div>
+</div>
+</main>
+
+<script>
+const PIECE = {1:'\u265F\uFE0E',2:'\u265E\uFE0E',3:'\u265D\uFE0E',4:'\u265C\uFE0E',5:'\u265B\uFE0E',6:'\u265A\uFE0E'};          // glyph for |piece|
+const S = 92;                                                     // square size
+const BUDGETS = [25,50,100,200,400,800,1600,3200];
+let moves = [], st = null, flipped = false, sel = null, busy = false, policy = [], lastInfo = null, gameId = 0;
+const $ = id => document.getElementById(id);
+
+async function post(url, body) { const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)}); return r.json(); }
+const sqName = i => 'abcde'[i%5] + (Math.floor(i/5)+1);
+const nameSq = n => (n.charCodeAt(0)-97) + 5*(parseInt(n[1])-1);
+function px(sq) { let f = sq%5, r = Math.floor(sq/5); if (flipped) { f = 4-f; r = 4-r; } return [f*S, (4-r)*S]; }
+
+// -------- drawing ----------------------------------------------------
+function drawBoard(svg, size, state, opts) {
+  opts = opts || {};
+  const s = size/5, ns = 'http://www.w3.org/2000/svg';
+  let h = `<svg xmlns="${ns}" width="${size}" height="${size}">`;
+  const P = sq => { let f = sq%5, r = Math.floor(sq/5); if (opts.flipped) { f = 4-f; r = 4-r; } return [f*s, (4-r)*s]; };
+  for (let sq = 0; sq < 25; sq++) {
+    const [x,y] = P(sq), f = sq%5, r = Math.floor(sq/5);
+    h += `<rect x="${x}" y="${y}" width="${s}" height="${s}" fill="${(f+r)%2? '#769656':'#eeeed2'}" data-sq="${sq}"/>`;
+  }
+  (opts.highlight||[]).forEach(([sq,c]) => { const [x,y] = P(sq); h += `<rect x="${x}" y="${y}" width="${s}" height="${s}" fill="${c}" pointer-events="none"/>`; });
+  if (!opts.mini) for (let f = 0; f < 5; f++) {
+    const ff = opts.flipped ? 4-f : f, rr = opts.flipped ? 4-f : f;
+    h += `<text x="${f*s+3}" y="${size-4}" font-size="${s*.14}" fill="#555" pointer-events="none">${'abcde'[ff]}</text>`;
+    h += `<text x="${size-s*.14-2}" y="${f*s+s*.18}" font-size="${s*.14}" fill="#555" pointer-events="none">${5-(opts.flipped? 4-f : f)}</text>`;
+  }
+  if (state) for (let sq = 0; sq < 25; sq++) {
+    const p = state.board[sq]; if (!p) continue;
+    const [x,y] = P(sq), white = p > 0;
+    h += `<text x="${x+s/2}" y="${y+s*.76}" font-size="${s*.78}" text-anchor="middle" pointer-events="none"
+          fill="${white? '#fff':'#111'}" stroke="${white? '#111':'#fff'}" stroke-width="${s*.03}" paint-order="stroke">${PIECE[Math.abs(p)]}</text>`;
+  }
+  (opts.dots||[]).forEach(sq => { const [x,y] = P(sq); h += `<circle cx="${x+s/2}" cy="${y+s/2}" r="${s*.14}" fill="rgba(20,20,20,.35)" pointer-events="none"/>`; });
+  (opts.arrows||[]).forEach(a => {
+    const [x1,y1] = P(a.from), [x2,y2] = P(a.to);
+    const w = Math.max(1.5, a.p * s * .22), op = Math.min(.95, .25 + a.p);
+    h += `<line x1="${x1+s/2}" y1="${y1+s/2}" x2="${x2+s/2}" y2="${y2+s/2}" stroke="rgba(0,120,60,${op})" stroke-width="${w}" stroke-linecap="round" pointer-events="none"/>`;
+    h += `<circle cx="${x2+s/2}" cy="${y2+s/2}" r="${w*.9}" fill="rgba(0,120,60,${op})" pointer-events="none"/>`;
+    if (!opts.mini && a.p > .08) h += `<text x="${x2+s/2}" y="${y2+s/2+4}" font-size="${s*.14}" text-anchor="middle" fill="#fff" pointer-events="none">${Math.round(a.p*100)}%</text>`;
+  });
+  return h + '</svg>';
+}
+
+function lastMoveHL() {
+  if (!moves.length) return [];
+  const u = moves[moves.length-1]; return [[nameSq(u.slice(0,2)), 'rgba(255,213,0,.4)'], [nameSq(u.slice(2,4)), 'rgba(255,213,0,.4)']];
+}
+function render() {
+  if (!st) return;
+  const hl = lastMoveHL();
+  if (st.check) { const k = st.board.indexOf(st.turn === 'w' ? 6 : -6); if (k >= 0) hl.push([k, 'rgba(230,60,60,.6)']); }
+  let dots = [];
+  if (sel !== null) { hl.push([sel, 'rgba(42,120,214,.5)']); dots = st.legal.filter(u => nameSq(u.slice(0,2)) === sel).map(u => nameSq(u.slice(2,4))); }
+  const arrows = ($('showpol').checked ? policy.map(p => ({from:nameSq(p.uci.slice(0,2)), to:nameSq(p.uci.slice(2,4)), p:p.p})) : []);
+  $('board').outerHTML = drawBoard(null, 460, st, {flipped, highlight:hl, dots, arrows}).replace('<svg ', '<svg id="board" ');
+  $('board').addEventListener('click', onClick);
+  $('moves').innerHTML = moves.map((m,i) => (i%2===0 ? `<b>${i/2+1}.</b> ` : '') + m + ' ').join('') || '–';
+  let t;
+  if (st.result === 1) t = 'White wins by ' + st.reason; else if (st.result === -1) t = 'Black wins by ' + st.reason; else if (st.result === 2) t = 'Draw by ' + st.reason;
+  else t = (st.turn === 'w' ? 'White' : 'Black') + ' to move' + (st.check ? ' — check!' : '') + (busy ? ' (thinking…)' : '');
+  $('status').textContent = t;
+}
+function setEval(cp, valueText) {
+  // cp: centipawns from White's view (clamped); mapped through tanh for the bar
+  const p = 50 + 50*Math.tanh(cp/400);
+  $('evalbar').style.width = p + '%';
+  $('evaltxt').textContent = valueText;
+}
+function showInfo(i) {
+  if (!i) { $('info').innerHTML = ''; return; }
+  let h = `<b>${i.agent}</b> · budget ${i.budget}<br>`;
+  if (i.depth !== undefined) h += `depth ${i.depth}, nodes ${i.nodes}, score ${(i.score_cp/100).toFixed(2)} pawns (mover's view)<br>PV: ${i.pv.join(' ')}`;
+  if (i.value !== undefined) h += `network+search value ${i.value.toFixed(2)} (mover's view, −1…+1), ${i.simulations} simulations`;
+  if (i.value === undefined && i.depth === undefined && i.simulations) h += `${i.simulations} simulations`;
+  if (policy.length) h += '<br>top moves: ' + policy.slice(0,4).map(p => `${p.uci} ${Math.round(p.p*100)}%`).join(', ');
+  $('info').innerHTML = h;
+}
+
+// -------- game flow ----------------------------------------------------
+async function refresh() { st = await post('/api/state', {moves}); render(); }
+function isHuman(color) { return $(color === 'w' ? 'wsel' : 'bsel').value === 'human'; }
+function budget() { return BUDGETS[+$('budget').value]; }
+
+async function maybeAI() {
+  const gid = gameId;
+  while (st && st.result === 0 && !isHuman(st.turn) && gid === gameId) {
+    busy = true; render();
+    const key = $(st.turn === 'w' ? 'wsel' : 'bsel').value;
+    const r = await post('/api/ai', {moves, agent:key, budget:budget()});
+    if (gid !== gameId) return;
+    busy = false;
+    policy = r.policy || []; lastInfo = r.info; showInfo(r.info);
+    const side = st.turn;
+    if (r.info.score_cp !== undefined) setEval(side === 'w' ? r.info.score_cp : -r.info.score_cp, ((side==='w'?1:-1)*r.info.score_cp/100).toFixed(2));
+    if (r.info.value !== undefined) { const v = (side === 'w' ? 1 : -1) * r.info.value; setEval(v*600, 'v=' + v.toFixed(2)); }
+    moves.push(r.move); await refresh();
+    policy = [];  // policy is for the position before the move; keep it visible until next
+    await new Promise(res => setTimeout(res, 250));
+  }
+  busy = false; render();
+}
+async function onClick(ev) {
+  if (busy || !st || st.result !== 0 || !isHuman(st.turn)) return;
+  const t = ev.target.getAttribute('data-sq'); if (t === null) return;
+  const sq = +t, piece = st.board[sq], mine = (st.turn === 'w') ? piece > 0 : piece < 0;
+  if (sel === null) { if (mine) { sel = sq; render(); } return; }
+  if (mine) { sel = (sel === sq) ? null : sq; render(); return; }
+  const base = sqName(sel) + sqName(sq);
+  const cands = st.legal.filter(u => u.startsWith(base));
+  if (!cands.length) { sel = null; render(); return; }
+  if (cands.length > 1) {                                     // promotion choice
+    const box = $('promo'); box.style.display = 'block'; box.innerHTML = 'Promote to: ';
+    cands.forEach(u => { const b = document.createElement('button'); b.textContent = PIECE[{q:5,r:4,b:3,n:2}[u[4]]]; b.onclick = () => { box.style.display = 'none'; play(u); }; box.appendChild(b); });
+    return;
+  }
+  play(cands[0]);
+}
+async function play(u) { sel = null; policy = []; moves.push(u); await refresh(); const e = await post('/api/eval', {moves}); void e; await maybeAI(); }
+
+async function newGame() { gameId++; moves = []; sel = null; policy = []; busy = false; lastInfo = null; showInfo(null); setEval(0, ''); $('promo').style.display = 'none'; await refresh(); await maybeAI(); }
+
+// -------- RL training explorer -------------------------------------------
+async function showCheckpoints() {
+  const agents = await (await fetch('/api/agents')).json();
+  let cks = agents.filter(a => a.key.startsWith('ck:azero2')); if (!cks.length) cks = agents.filter(a => a.key.startsWith('ck:'));
+  const step = Math.max(1, Math.ceil(cks.length / 8)); cks = cks.filter((_, i) => i % step === 0 || i === cks.length-1);
+  $('trboards').innerHTML = ''; $('trmsg').textContent = 'running searches…';
+  const s = await post('/api/state', {moves});
+  for (const c of cks) {
+    const r = await post('/api/ai', {moves, agent:c.key, budget:+$('trbudget').value});
+    const arrows = (r.policy||[]).map(p => ({from:nameSq(p.uci.slice(0,2)), to:nameSq(p.uci.slice(2,4)), p:p.p}));
+    const div = document.createElement('div'); div.className = 'mini';
+    div.innerHTML = drawBoard(null, 210, s, {mini:true, arrows}) + `<br>${c.label.replace('AlphaZero checkpoint ','')}<br>value ${r.info.value !== undefined ? r.info.value.toFixed(2) : '–'}`;
+    $('trboards').appendChild(div);
+  }
+  $('trmsg').textContent = 'value = network + search estimate of the outcome for the side to move.';
+}
+
+// -------- experiments tab --------------------------------------------------
+const CAP = {
+  fig_e1_elo:'Elo of every agent at the same compute budget, relative to hand-crafted alpha-beta.',
+  fig_e1_heatmap:'Pairwise match scores (row against column).',
+  fig_scaling:'Elo against search budget, measured against alpha-beta at 400 nodes.',
+  fig_e2_fairy:'Scores against Fairy-Stockfish at fixed depths: an independent anchor.',
+  fig_e3_learning:'Learning curves: every saved checkpoint re-tested against hand-crafted alpha-beta.',
+  fig_e4_quality:'Evaluation lost per move versus a deep Fairy-Stockfish search.',
+  fig_weights:'Evaluation weights learned by TDLeaf (RL) and by the genetic algorithm.',
+  fig_azero_training:'AlphaZero-style training losses and test scores.'};
+async function loadExp() {
+  const d = await (await fetch('/api/results')).json();
+  if (d.e1) {
+    const rows = d.e1.names.map((n,i) => ({n, e:d.e1.elo[i], lo:d.e1.lo[i], hi:d.e1.hi[i]})).sort((a,b) => b.e - a.e);
+    $('e1tab').innerHTML = '<table><tr><th>Agent</th><th>Elo (vs hand-crafted)</th><th>95% CI</th></tr>' +
+      rows.map(r => `<tr><td>${r.n}</td><td>${r.e.toFixed(0)}</td><td>${r.lo.toFixed(0)} … ${r.hi.toFixed(0)}</td></tr>`).join('') + '</table>' +
+      `<div style="color:var(--ink2);margin-top:6px">budget ${d.e1.budget} nodes / simulations per move · ${d.e1.n_openings} openings × 2 colours per pairing</div>`;
+  } else $('e1tab').textContent = 'No results yet — run  python -m harness.run_all';
+  $('figs').innerHTML = (d.figures||[]).map(f => { const k = f.replace('.png',''); return `<figure><img src="/figures/${f}"><figcaption>${CAP[k]||k}</figcaption></figure>`; }).join('');
+}
+
+// -------- init ---------------------------------------------------------------
+async function init() {
+  const agents = await (await fetch('/api/agents')).json();
+  const opts = '<option value="human">Human</option>' + agents.filter(a => !a.key.startsWith('ck:')).map(a => `<option value="${a.key}">${a.label}</option>`).join('');
+  $('wsel').innerHTML = opts; $('bsel').innerHTML = opts;
+  $('wsel').value = 'human'; $('bsel').value = agents.find(a => a.key === 'az') ? 'az' : 'ab';
+  $('budget').oninput = () => { $('bval').textContent = budget(); };
+  $('new').onclick = newGame; $('flip').onclick = () => { flipped = !flipped; render(); };
+  $('undo').onclick = async () => { gameId++; busy = false; const n = (isHuman('w') !== isHuman('b')) ? 2 : 1; moves = moves.slice(0, Math.max(0, moves.length - n)); sel = null; policy = []; await refresh(); await maybeAI(); };
+  $('wsel').onchange = $('bsel').onchange = () => { gameId++; busy = false; maybeAI(); };
+  $('showpol').onchange = render; $('trgo').onclick = showCheckpoints;
+  document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+    document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === b.dataset.tab));
+    if (b.dataset.tab === 'exp') loadExp();
+  });
+  await newGame();
+}
+init();
+</script>
+</body>
+</html>
